@@ -8,8 +8,6 @@ University of the Cumberland – Kentucky
 This is the main class file which will consist of everything like the library, functions for insertion, deletion etc.
 """
 
-import heapq
-
 class Task:
     def __init__(self, task_id, description, deadline, urgency):
         self.task_id = task_id
@@ -22,40 +20,37 @@ class Task:
 
 class TaskScheduler:
     def __init__(self):
-        self.heap = []  # Priority queue (min-heap)
-        self.tasks = {}  # Hash table (dictionary) for task metadata
+        self.tasks = {}  # Hash table for tasks
 
     def add_task(self, task_id, description, deadline, urgency):
-        """Add a task to both priority queue and hash table."""
+        """Add a task to the scheduler."""
         if task_id in self.tasks:
             raise ValueError(f"Task ID {task_id} already exists")
         task = Task(task_id, description, deadline, urgency)
-        # Add to hash table
         self.tasks[task_id] = task
-        # Add to priority queue
-        heapq.heappush(self.heap, (deadline, -urgency, task_id, description))
 
     def get_next_task(self):
-        """Retrieve the highest-priority task."""
-        if not self.heap:
-            raise IndexError("Priority queue is empty")
-        deadline, neg_urgency, task_id, description = self.heap[0]
-        return self.tasks[task_id]  # Return task from hash table
+        """Return the highest-priority task based on earliest deadline and highest urgency."""
+        if not self.tasks:
+            raise IndexError("No tasks available")
+        # Sort by deadline first, then urgency (descending)
+        next_task = sorted(self.tasks.values(), key=lambda x: (x.deadline, -x.urgency))[0]
+        return next_task
 
     def complete_task(self):
         """Remove and return the highest-priority task."""
-        if not self.heap:
-            raise IndexError("Priority queue is empty")
-        deadline, neg_urgency, task_id, description = heapq.heappop(self.heap)
-        task = self.tasks.pop(task_id)  # Remove from hash table
-        return task
+        if not self.tasks:
+            raise IndexError("No tasks available")
+        next_task = self.get_next_task()
+        del self.tasks[next_task.task_id]
+        return next_task
 
     def find_task(self, task_id):
-        """Retrieve task details by ID from hash table."""
+        """Retrieve a task by ID."""
         if task_id not in self.tasks:
             raise ValueError(f"Task ID {task_id} not found")
         return self.tasks[task_id]
 
     def is_empty(self):
-        return len(self.heap) == 0
+        return len(self.tasks) == 0
 

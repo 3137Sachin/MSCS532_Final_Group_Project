@@ -34,14 +34,14 @@ def demonstrate_task_scheduler():
     except ValueError as e:
         print(f"Error: {e}")
 
-    # Test Case 4: Complete tasks
+    # Test Case 4: Complete task
     print("\nTest Case 4: Completing tasks")
     while not scheduler.is_empty():
         task = scheduler.complete_task()
         print(f"Completed: {task}")
 
-    # Test Case 5: Edge case - Empty queue
-    print("\nTest Case 5: Empty queue handling")
+    # Test Case 5: Edge case - Empty priority list
+    print("\nTest Case 5: Empty priority list handling")
     try:
         scheduler.get_next_task()
     except IndexError as e:
